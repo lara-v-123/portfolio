@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="top-bar">Coding Projects</div>
+      <div class="nav-items">
+        <a href="index.html">Home</a> <a href="cad.html">CAD Projects
+        </a> <a href="coding.html">Coding Projects</a> <a href="robotics.html">Robotics Projects</a> <a href="about.html">About</a>
+      </div>
+    </nav>
+    <main>
+      <div class="heading">
+        <h3>
+            Music Playlist
+          </h3>
+      </div>
+  </main>
+    <pre>
+        <code>
+            // Lara Vaidya
+            // 4/25/2024
+            // CSE 122
+            // P1: Music Playlust  
+            // TA: Poojitha and Atharva
+            // This class runs a program to create and manage a playlist along with playlist history 
+            import java.util.*;
+            import java.io.*;
+            
+            public class MusicPlaylist {
+                public static void main (String[] args) {
+            
+                    Scanner console = new Scanner(System.in);
+                    Queue<String> playlist = new LinkedList <>(); 
+                    Stack<String> history = new Stack <>();
+            
+                    System.out.println("Welcome to the CSE 122 Music Playlist!");
+            
+                    String choice = "";
+                    while (!choice.equalsIgnoreCase("Q")) {
+            
+                        System.out.println("(A) Add song");
+                        System.out.println("(P) Play song");
+                        System.out.println("(Pr) Print history");
+                        System.out.println("(C) Clear history");
+                        System.out.println("(D) Delete from history");
+                        System.out.println("(Q) Quit");
+                        System.out.println();
+                        System.out.print("Enter your choice: ");
+                        choice = console.nextLine();
+            
+                        if (choice.equalsIgnoreCase("A")) 
+                        {
+                           addSong(console, playlist);
+                        } 
+                        else if (choice.equalsIgnoreCase("P")) 
+                        {
+                           playSong(playlist, history);
+                        } 
+                        else if (choice.equalsIgnoreCase("Pr")) 
+                        {
+                            printHistory(history);
+                        } 
+                        else if (choice.equalsIgnoreCase("C")) 
+                        {
+                            history.clear(); 
+                        } 
+                        else if (choice.equalsIgnoreCase("D")) 
+                        {
+                           deleteHistory(console, history);
+                        }
+                        System.out.println();
+                        System.out.println();
+                    }
+                }
+            
+                // Behavior - prompts user to enter a song and then adds song to queue of songs in playlist 
+                // Exceptions - None
+                // Returns - none
+                // Parameters - Scanner console to read in user input of song to play, Queue<String> 
+                // playlist to add to queue of songs 
+                public static void addSong (Scanner console, Queue<String> playlist) {
+                    System.out.print("Enter song name: ");
+                    String song = console.nextLine();
+                    playlist.add(song);
+                    System.out.println("Successfully added " + song);
+                }
+                
+                // Behavior - plays the next song in the queue if there are songs left in the playlist queue, 
+                // otherwise throws exception
+                // Exceptions - throws IllegalStateException when the playlist queue passed into the method 
+                // is empty and so no song can be played
+                // Returns - none
+                // Parameters - Queue<String> playlist to play from the queue of songs, Stack<String> 
+                // history to access to stack of the history of songs and add to it from playlisy 
+                public static void playSong (Queue<String> playlist, Stack<String> history) {
+                    if (playlist.isEmpty()) {
+                        throw new IllegalStateException();
+                    }    
+                    String playedSong = playlist.remove();
+                    history.add(playedSong);
+                    System.out.println("Playing song: " + playedSong);
+                }
+            
+                // Behavior - prints out the queue of history of recently played in order from recent to old
+                // songs unless histoy is empty
+                // Exceptions - throws IllegalArgumentException if the history is empty and so there are 
+                // no songs from history to print
+                // Returns - none
+                // Parameters - Stack<String> history to access to stack of the history of songs 
+                public static void printHistory (Stack<String> history) {
+                     if (history.isEmpty()) {
+                        throw new IllegalStateException();
+                    }    
+                    Stack<String> tempHistory = new Stack <>();
+                    while (!history.isEmpty()) { 
+                        System.out.println("    " + history.peek());
+                        tempHistory.push(history.pop());
+                    }
+                    stackToStack(tempHistory, history);
+                }
+            
+                // Behavior - deletes a number of songs specified by the user from either the beginning of 
+                // history if a negative number or from recent history if a positive number is inputted, 
+                // checking if there are enough songs from history to delete the number from the user. 
+                // Exceptions - throws IllegalArgumentException if the user inputs a number of songs to 
+                // delete greater than the number of songs in history
+                // Returns - none
+                // Parameters - Scanner console to read in user input of number, Stack<String> history 
+                // to access to stack of the history of songs 
+                public static void deleteHistory (Scanner console, Stack<String> history) {
+                    System.out.println("A positive number will delete from recent history.");
+                    System.out.println("A negative number will delete from the beginning of history.");
+                    System.out.print("Enter number of songs to delete: ");
+                    int num = Integer.parseInt(console.nextLine());
+                    int absNum = Math.abs(num);
+                    if (absNum > history.size()) {
+                        throw new IllegalArgumentException();
+                    }
+                    if (num > 0 ) {
+                        for (int i = 0; i < num; i++) {
+                            history.pop();
+                        }
+                    }
+                    else if (num < 0) {
+                        Stack<String> temp = new Stack <>();
+                        stackToStack(history, temp);
+                        for (int i = 0; i < absNum; i++) {
+                            temp.pop();
+                        }
+                        stackToStack(temp, history);
+                    }
+                }
+            
+                // Behavior - helper method to add the contents of one stack to another stack, emptying the 
+                // old stack
+                // Exceptions - none
+                // Returns - none
+                // Parameters - Stack<String> oldStack is the orginal stack with content that will be emptied,
+                // Stack<String> newStack is the new stack that will take in the content from oldStack
+                public static void stackToStack (Stack<String> oldStack, Stack<String> newStack) {
+                    while (!oldStack.isEmpty()) {
+                        newStack.push(oldStack.pop());
+                    }
+                }
+            }
+                
+        </code>
+    </pre>
+  </body>
+</html>

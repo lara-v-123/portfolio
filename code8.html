@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="top-bar">Coding Projects</div>
+      <div class="nav-items">
+        <a href="index.html">Home</a> <a href="cad.html">CAD Projects
+        </a> <a href="coding.html">Coding Projects</a> <a href="robotics.html">Robotics Projects</a> <a href="about.html">About</a>
+      </div>
+    </nav>
+    <main>
+      <div class="heading">
+        <h3>
+            DNArray Sequencing
+          </h3>
+      </div>
+  </main>
+    <pre>
+        <code>
+            // Lara Vaidya
+            // CSE 121
+            // P3
+            // Sequencing.java
+            // TA: Shayna Suzuki 
+            // This class counts the frequency of DNA letters in each position and calcualtes the 
+            // probability of a letter being in that position. This is then used to print the most 
+            // probably sequence 
+            
+            import java.util.*;
+            
+            public class Sequencing {
+            
+                public static final char[] NUCLEOTIDES = {'A', 'C', 'G', 'T'}; // constatnt
+            
+                // main calls methods and then prints correct sequence 
+                public static void main(String[] args) {
+                    String[] sequences = {"ACTGTG", "ACTGCC", "ATCGCT", "ACTGTG"};
+                    int[][] counts = counts(sequences);
+                    double[][] probs = probabilities(counts);
+                    // Overall Results
+                    String[] correctSquence = result(probs);
+                    System.out.println(Arrays.toString(correctSquence));
+                }
+            
+                // gets the index of a nucleotide in the NUCLEOTIDES array
+                // passes in the character of the nucleotide and then returns an int of the index
+                public static int indexOfNucleotide(char nucleotide) {
+                    for (int i = 0; i < NUCLEOTIDES.length; i++) {
+                        if (NUCLEOTIDES[i] == nucleotide) {
+                            return i;
+                        }
+                    }
+                    return -1; 
+                }
+            
+                // passes in the string array of sequences
+                // created a 2D array of the counts and counts the frequency of each nucleotide 
+                // at every position across the DNA sequences
+                // returns the array (int) of counts
+                public static int[][] counts(String[] sequences) {
+                    int[][] counts = new int[sequences[0].length()][NUCLEOTIDES.length]; 
+                    for (int i = 0; i < sequences.length; i++) {
+                        String sequence = sequences[i];     
+                        for (int j = 0; j < sequence.length(); j++) {
+                            char nucleotide = sequence.charAt(j);
+                            int index = indexOfNucleotide(nucleotide);
+                            counts[j][index] += 1;
+                        }    
+                    }
+                    return counts; 
+                }
+            
+                // takes in the counts (int) 2D array
+                // calcultates the probabilty of each nucleotide occuring at each position
+                // using the total count of the sequences
+                // returns 2D array of probabilities (double)
+                public static double[][] probabilities(int[][] counts) {
+            
+                    double[][] probabilities = new double[counts.length][counts[0].length];
+                    int totNumOfSequences = 0;
+                    for (int i = 0; i < counts[0].length; i++) {
+                        totNumOfSequences += counts[0][i];
+                    }
+                    for (int i = 0; i < probabilities.length; i++) {
+                        for (int j = 0; j < probabilities[i].length; j++) {
+                            probabilities[i][j] = counts[i][j] * 1.0 / totNumOfSequences ;
+                        }
+                    }
+                    return probabilities; 
+                }
+            
+                // takes in the 2D array of probabilities (double)
+                // returns a string array of predictions by finding the max probabilty for a nucleotide
+                // at each position and adding to the array
+                public static String[] result(double[][] probs) {
+            
+                    String[] prediction = new String[probs.length];
+                    for (int i = 0; i < prediction.length; i++) {
+                        prediction[i] = getMaxNucleotide(probs[i]);
+                    }
+                    return prediction;
+                }
+            
+                // takes in the array of probabilites for one row at a time 
+                // calcultates the highest probability in that row and determines what nucleotide is there
+                // returns string with the highest nucleotide(s)
+                public static String getMaxNucleotide(double[] probs) {
+                    double highestProbability = 0.0;
+                    String nucleotide = "";
+                    for (int i = 0; i < probs.length; i++) {
+                        if (probs[i] > highestProbability) {
+                            highestProbability = probs[i];
+                        }
+                    }
+                    for (int i = 0; i < probs.length; i++) {
+                        if (highestProbability == probs[i]) {
+                            nucleotide += NUCLEOTIDES[i];
+                        }
+                    }
+                    return nucleotide;
+                }
+            }
+        </code>
+    </pre>
+  </body>
+</html>

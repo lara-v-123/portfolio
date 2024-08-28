@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="top-bar">Coding Projects</div>
+      <div class="nav-items">
+        <a href="index.html">Home</a> <a href="cad.html">CAD Projects
+        </a> <a href="coding.html">Coding Projects</a> <a href="robotics.html">Robotics Projects</a> <a href="about.html">About</a>
+      </div>
+    </nav>
+    <main>
+      <div class="heading">
+        <h3>
+            Stonks
+          </h3>
+      </div>
+  </main>
+    <pre>
+        <code>
+            // Lara Vaidya
+            // 4/11/2024
+            // CSE 122
+            // P0: Stonks
+            // TA: Atharva  and Poojitha 
+            // This class uses files to allow a user to buy, sell, and save a portfolio of stocks
+
+            import java.util.*;
+            import java.io.*;
+
+            public class Stonks {
+                public static final String STOCKS_FILE_NAME = "stonks.tsv";
+
+                // Exceptions - throws FileNotFoundException
+                public static void main(String[] args) throws FileNotFoundException {
+                    Scanner console = new Scanner (System.in); // console scanner
+                    Scanner file = new Scanner(new File(STOCKS_FILE_NAME)); // file scanner 
+                    
+                    int numStocks = Integer.parseInt(file.nextLine()); // size of arrays
+                    // initialize empty arrays
+                    String[] stocks = new String[numStocks];
+                    double[] prices = new double[numStocks];
+                    double[] portfolio = new double[numStocks];
+                    file.nextLine(); // skip past heading
+                    // populate the stocks and prices arrays by reading from file
+                    populateStocks(file, stocks, prices );
+                
+                    welcomeMessage(stocks, prices); // welcome message 
+
+                    String choice = "";
+                    // running while the user does not quit
+                    while (!choice.equalsIgnoreCase("Q")) {
+                        
+                        System.out.println("Menu: (B)uy, (Se)ll, (S)ave, (Q)uit");
+                        System.out.print("Enter your choice: ");
+                        
+                        choice = console.nextLine();
+                        if (choice.equalsIgnoreCase("B")) {
+                            buyStock(console, stocks, prices, portfolio);
+                        }
+                        else if (choice.equalsIgnoreCase("Se")) {
+                            sellStock(console, stocks, portfolio);
+
+                        } else if (choice.equalsIgnoreCase("S")) {
+                            savePortfolioToFile(console, stocks, portfolio);
+
+                        } else if (!choice.equalsIgnoreCase("Q")) {
+                            System.out.println("Invalid choice: " + choice);
+                            System.out.println("Please try again");
+                            System.out.println();
+                        }
+                    }
+                    double portfolioValue = portfolioValue(portfolio, prices);
+                    System.out.println();
+                    System.out.println("Your portfolio is currently valued at: $" + portfolioValue);
+                }
+
+
+                // Behavior - this method populates the stocks by reading in the file and
+                // adding specific information to the stocks and prices arrays
+                // Exceptions - none
+                // Returns - none
+                // Parameters - Scanner file to read in the file of stock and their data, String[] stocks 
+                // which is an array to hold the stock names, and double[] prices which holds the price 
+                // of each stock at the corresponding indice in the array 
+                public static void populateStocks (Scanner file, String[] stocks, double[] prices ) {
+                    int stockNum = 0;
+                    while (file.hasNextLine()) {
+                        String line = file.nextLine();
+                        Scanner lineScan = new Scanner(line);
+                        stocks[stockNum] = lineScan.next();
+                        prices[stockNum] = lineScan.nextDouble();
+                        stockNum++;
+                    }
+                }
+
+                // Behavior - prints a welcome message displaying the current data of stocks
+                // Returns - no return
+                // Parameters - String[] stocks and double[] prices to print out the stock market 
+                // titles and prices
+                public static void welcomeMessage (String[] stocks, double[] prices) {
+                    System.out.println("Welcome to the CSE 122 Stocks Simulator!");
+                    System.out.println("There are " + stocks.length + " stocks on the market:");
+                    for (int i = 0; i < stocks.length; i++) {
+                        System.out.println(stocks[i] + ": " + prices[i]);
+                    }
+                    System.out.println();
+                }
+                
+                // Behavior - allows the user to buy stocks, asking for stock ticker and budget, 
+                // and requiring a minimum budget of $5 to successfully purchase stock
+                // and determining how many shares the user can buy, saving it in the portfolio 
+                // by adjusting portfolio value
+                // Exceptions - none
+                // Returns - no return 
+                // Parameters - Scanner console to read in user input, String[] stocks to get names of  
+            //  stocks, double[] price, to read data, double[] protfolio to save the bought shares
+                public static void buyStock (Scanner console, String[] stocks, double[] price, 
+                    double[] portfolio) {
+                    // prompt user 
+                    System.out.print("Enter the stock ticker: ");
+                    String stockName = console.nextLine();
+                    System.out.print("Enter your budget: ");
+                    double budget = Double.parseDouble(console.nextLine()); 
+                    // calculate how many shares of stock they can purchase
+                    for (int i = 0; i < stocks.length; i++)  {
+                        if (stocks[i].equals(stockName)) {
+                            if (budget >= 5) {
+                                double shares = budget / price[i];
+                                portfolio[i] += shares;
+                                System.out.println("You successfully bought " + stockName + ".");
+                            }
+                            else {
+                                System.out.println("Budget must be at least $5");
+
+                            }
+                            System.out.println();
+                            i = stocks.length;
+                        }
+                    }
+                }
+
+                // Behavior - allows the user to sell stocks by getting the stock name and how many 
+                // shares to sell and determines if the user has enough shars of the stock to sell, 
+                // adjusting their portfolio when it is sold
+                // Exceptions - none 
+                // Returns - none
+                // Parameters - Scanner console to read in user input, String[] stocks to get stock 
+                // name, double[] portfolio to adjust the users portfolio
+                public static void sellStock (Scanner console, String[] stocks, double[] portfolio) {
+                    // prompt user
+                    System.out.print("Enter the stock ticker: ");
+                    String stockName = console.nextLine();
+                    System.out.print("Enter the number of shares to sell: ");
+                    double shares = Double.parseDouble(console.nextLine());
+
+                    for (int i = 0; i < stocks.length; i++) {
+                        if (stockName.equals(stocks[i])) {
+                            if (portfolio[i] >= shares) {
+                                portfolio[i] -= shares;
+                                System.out.println("You successfully sold " + shares + " shares of " 
+                                    + stockName + ".");
+                            }
+                            else { 
+                            System.out.println("You do not have enough shares of " + stockName + 
+                                " to sell " + shares + " shares.");  
+                            }
+                            System.out.println();
+                            i = stocks.length;
+                        }
+                    }
+                }
+
+                // Behavior - Saves the users portfolio to a user generated file name
+                // Exceptions - throws FileNotFoundException
+                // Returns - none
+                // Parameters - Scanner console to read in file namem String[] stocks to print stock 
+                // names, double[] portfolio to print portfolio data
+                public static void savePortfolioToFile (Scanner console, String[] stocks, double[] portfolio)
+                    throws FileNotFoundException { 
+                    System.out.print("Enter new portfolio file name: ");
+                    String fileName = console.nextLine();
+                    PrintStream output = new PrintStream(new File(fileName));
+                    for (int i = 0; i < portfolio.length; i++) {
+                        if (portfolio[i] > 0.0 ) {
+                            output.println(stocks[i] + "    " + portfolio[i]);
+                        }
+                    }
+                }
+
+                // Behavior - Calculates the total value of the portfolio by multiplying shares of each 
+                // individual compnay by the price and adding each company together
+                // Exceptions - none
+                // Returns - double of the total calculated value of the portfolio
+                // Parameters - double[] porfolio to get the user owned shares, and double[] prices for 
+                // price of each share
+                public static double portfolioValue (double[] portfolio, double[] prices) {
+                    double portfolioValue = 0;
+                    for (int i = 0; i < portfolio.length; i++) {
+                        portfolioValue += (portfolio[i] * prices[i]);
+                    }
+                    return portfolioValue;
+                }
+            }
+                
+        </code>
+    </pre>
+  </body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="top-bar">Coding Projects</div>
+      <div class="nav-items">
+        <a href="index.html">Home</a> <a href="cad.html">CAD Projects
+        </a> <a href="coding.html">Coding Projects</a> <a href="robotics.html">Robotics Projects</a> <a href="about.html">About</a>
+      </div>
+    </nav>
+    <main>
+      <div class="heading">
+        <h3>
+            Music Box
+          </h3>
+      </div>
+  </main>
+    <pre>
+        <code>
+            // Lara Vaidya
+            // 4/4/2024
+            // CSE 122
+            // C0: Warm Up
+            // TA: Atharva  and Poojitha 
+            // This class creates a melody from user input and finds which column of the melody 
+            // contains a given chord
+
+                import java.util.*;
+
+                public class MusicBox {
+                    public static final String NOTES = "CDEFGAB";
+                    public static final String SHARP = "♯";
+                    public static final String FLAT = "♭";
+                    
+                    public static void main(String[] args) {
+                        Scanner console = new Scanner(System.in);
+                        String[][] song = composeSong(console);
+                        System.out.println("Returned song 2D array:");
+                        for (int i = 0; i < song.length; i++) {
+                            for (int j = 0; j < song[0].length; j++) {
+                                System.out.print(song[i][j] + " "); 
+                            }
+                            System.out.println();
+                        }
+                        
+                        String[] chord = {"B"}; // chord
+
+                        if (song.length >= chord.length) { // only find chord if the song is long enough 
+                            int num = findChord(song, chord);
+                        }
+                    }
+
+                    // Behavior: This method prompts the user to enter the number and length of melodies and then
+                    // calls the method to create the melody
+                    // Returns: 2D string array from createMelodies method with size determined by user input
+                    // Parameters: Scanner console to ready the user input
+                    public static String[][] composeSong (Scanner console) {
+
+                        System.out.print("Enter the number of melodies: ");
+                        int numMelodies = console.nextInt();
+                        System.out.print("Enter the length of each melody: ");
+                        int lengthMelodies = console.nextInt();
+
+                        String[][] song = createMelodies(console, numMelodies, lengthMelodies);
+                        
+                        return song;
+                    }
+
+                    // Behavior: Prompts the user to fill in the notes for each melody
+                    // Return: returns filled in  2D String array of song
+                    // Parameters: Scanner console to read user input, int numMelodies as number
+                    // of melodies (rows),and int lengthMelodies as number of notes in each melody (columns)
+                    public static String[][] createMelodies(Scanner console, int numMelodies, int lengthMelodies) {
+                        
+                        String[][] filledSong = new String[numMelodies][lengthMelodies]; 
+                        
+                        for (int i = 0; i < filledSong.length; i++) {
+                        
+                            System.out.println();
+                            System.out.println("Composing melody #" + (i+1));
+
+                                for (int j = 0; j < filledSong[i].length; j++) {
+
+                                    System.out.print("  Enter note #" + (j+1) + ": ");
+                                    filledSong[i][j] = console.next();
+                                }
+                        }
+                        System.out.println(); 
+                        return filledSong;
+                    }
+
+                    // Behavior: This method executes the algorithm for finding the chord within the song. It 
+                    // calls two helper methods in order to determine the location of the chord within the song
+                    // Return: Returns the int index of the column from the song where the chord is found
+                    // Parameters: 2D String[][] song array created by user, 1D String[] chord array of the 
+                    // given chord to find
+                    public static int findChord(String[][] song, String[] chord) {
+                    int columnIndex = -1; // variable for index of the column
+
+                        // going across all the columns
+                        for (int column = 0; column < song[0].length; column++) {
+                            // array to keep track of if the chord note is present in the melody note
+                            boolean[] noteInChord = new boolean[song.length]; 
+                            // array to keep track of if all the chords are present in the melody
+                            boolean[] chordNotePresent = new boolean[chord.length]; 
+
+                            for (int row = 0; row < song.length; row++) {
+
+                                String currentNote = song[row][column]; // taking one note of the melody 
+                                // loop through the chord array to check
+                                for (int chordIndex = 0; chordIndex < chord.length; chordIndex++) {
+
+                                    if (currentNote.equals(chord[chordIndex])) {
+                                        // make values in array true
+                                        noteInChord[row] = true; // the note in song is in the chord
+                                        chordNotePresent[chordIndex] = true; // a note in the chord is present 
+                                    }
+                                }
+                            }
+                            boolean chordPresent = arrayIsAllTrue(chordNotePresent);
+                            boolean noteIsInChord = arrayIsAllTrue(noteInChord);
+
+                            // save index of column where chord is present
+                            columnIndex = checkNote(noteIsInChord, chordPresent, column); 
+                            if (columnIndex != -1) {
+                                column = song[0].length; // exit the loop
+                            }
+                        }
+                        return columnIndex;
+                    }
+
+                    // Behavior: This method checks if two booleans satisfy the condition and decides
+                    // to store the index of the chord
+                    // Returns: int of the saved column index or -1 if condition is not met
+                    // Parameters: boolean noteIsInChord, boolean chordPresent, and the current index 
+                    // int column of the column within the song array 
+                    public static int checkNote (boolean noteIsInChord, boolean chordPresent, int column) {
+                        if (noteIsInChord && chordPresent) {
+                            return column; // save index of column where chord is present
+                        }
+                        else {
+                            return -1;
+                        }
+                    }
+                    
+                    // Behavior: This method checks if any array of booleans is all true
+                    // Returns: boolean true or false whether the array is all true or note
+                    // Parameters: takes in the given boolean[] array 
+                    public static boolean arrayIsAllTrue (boolean[] array) {
+                        boolean present = true;
+                            for (int i = 0; i < array.length; i++) {
+                                if (array[i] == false) {
+                                    present = false;
+                                    i = array.length;
+                                }
+                            }
+
+                        return present;
+                    }
+                }
+                
+        </code>
+    </pre>
+  </body>
+</html>

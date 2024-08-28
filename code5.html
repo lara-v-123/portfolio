@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="top-bar">Coding Projects</div>
+      <div class="nav-items">
+        <a href="index.html">Home</a> <a href="cad.html">CAD Projects
+        </a> <a href="coding.html">Coding Projects</a> <a href="robotics.html">Robotics Projects</a> <a href="about.html">About</a>
+      </div>
+    </nav>
+    <main>
+      <div class="heading">
+        <h3>
+            Election Simulator
+          </h3>
+      </div>
+  </main>
+    <pre>
+        <code>
+            // Lara Vaidya
+            // CSE 121
+            // P1: Election Simulator
+            // TA: Shayna Suzuki
+            // This class prints out the votes for 10 districts of 5 simulation 
+            // of randomly generated voting sizes
+            
+            import java.util.*;
+            
+            public class ElectionSimulator {
+            
+                public static final String PURPLE = "🟪";
+                public static final String YELLOW = "🟡";
+                
+                public static final int NUM_DISTS = 10;
+                public static final int NUM_SIMS = 5;
+            
+                public static final double PURPLE_POLL_AVG = 0.52;
+                public static final double YELLOW_POLL_AVG = 1.0 - PURPLE_POLL_AVG;
+            
+                public static final double PURPLE_POLL_ERR = 0.05;
+                public static final double YELLOW_POLL_ERR = -1.0 * PURPLE_POLL_ERR;
+            
+                public static void main (String[] args) {
+            
+                    Random rand = new Random();
+            
+                    // intro text
+                    System.out.println("Welcome to the Election Simulator!");
+                    System.out.println("Running " + NUM_SIMS + " simulations of " + 
+                        NUM_DISTS + " districts.");
+                    System.out.println();
+                    System.out.println("The Purple Party is polling at " + 
+                        PURPLE_POLL_AVG * 100 + "%");
+                    System.out.println("The Yellow Party is polling at " + 
+                        YELLOW_POLL_AVG * 100 + "%");
+                    System.out.println();
+            
+                    // variables to be used throughout the loops
+                    double absoluteTotalPurplePartyVotes = 0.0;
+                    double absoluteTotalYellowPartyVotes = 0.0;
+            
+                    double purpleTotalPercentage = 0.0;
+                    double yellowTotalPercentage = 0.0;
+            
+                    // loop to go through number of simulations 
+                    for (int i = 1; i <= NUM_SIMS; i++) {
+                        System.out.println("Running Simulation " + i + ":");
+            
+                        double purplePartyTotalVotes = 0.0;
+                        double yellowPartyTotalVotes = 0.0;
+            
+                        // loops for number of districts
+                        for (int j = 1; j <= NUM_DISTS; j++) {
+            
+                            System.out.print("  District #" + j + " - ");
+            
+                            // running single distrcit simulation 
+                            int totalVotes = rand.nextInt(1,1001);
+                            double districtError = rand.nextGaussian() * 0.5;
+                            double purplePercentVotes = districtError * PURPLE_POLL_ERR + PURPLE_POLL_AVG; 
+                            double yellowPercentVotes = districtError * YELLOW_POLL_ERR + YELLOW_POLL_AVG;
+                            
+                            double numPurplePartyVotes = totalVotes * purplePercentVotes;
+                            double numYellowPartyVotes = totalVotes * yellowPercentVotes;
+                            
+                            int purplePartyVotesRoundedResult = (int) Math.round(numPurplePartyVotes);
+                            int yellowPartyVotesRoundedResult = (int) Math.round(numYellowPartyVotes);
+            
+                            // updating variable for totals 
+                            purplePartyTotalVotes += purplePartyVotesRoundedResult;
+                            absoluteTotalPurplePartyVotes += purplePartyTotalVotes;
+                            yellowPartyTotalVotes += yellowPartyVotesRoundedResult;
+                            absoluteTotalYellowPartyVotes += yellowPartyTotalVotes;
+            
+                            System.out.print(PURPLE + " " + purplePartyVotesRoundedResult
+                                + "  " + YELLOW + " " + yellowPartyVotesRoundedResult);
+            
+                            System.out.println();
+                        }
+                        System.out.println();
+                        
+                        double totalTurnout = purplePartyTotalVotes + yellowPartyTotalVotes;
+            
+                        // prints vote data of the simulation 
+                        
+                        // calcuating that percentage of votes and updating total count
+                        double purpleVotePercentage = 100.0 * purplePartyTotalVotes / totalTurnout;
+                        purpleTotalPercentage += purpleVotePercentage;
+                        double yellowVotePercentage = 100.0 * yellowPartyTotalVotes / totalTurnout;
+                        yellowTotalPercentage += yellowVotePercentage;
+            
+                        // rounding vote percetnges 
+                        purpleVotePercentage = (double) Math.round(purpleVotePercentage * 100) / 100;
+                        yellowVotePercentage = (double) Math.round(yellowVotePercentage * 100) / 100;
+                        
+                        System.out.println("  Purple Party's votes: " + Math.round(purplePartyTotalVotes)
+                            + " (" + purpleVotePercentage + "%)"); 
+                        System.out.println("  Yellow Party's votes: " + Math.round(yellowPartyTotalVotes)
+                            + " (" + yellowVotePercentage + "%)");
+            
+                        // prints out a visualization of the party votes using symbols 
+                        System.out.print("  Visualization: ");
+            
+                        int purpleSymbolNum = (int)Math.round(purplePartyTotalVotes);
+                        int yellowSymbolNum = (int)Math.round(yellowPartyTotalVotes);
+                        
+                        // loops to print symbols for every 100 votes for each party
+                        for (int j = 0; j < purpleSymbolNum / 100; j++) {
+                            System.out.print(PURPLE);
+                        }
+                        System.out.println();
+                        System.out.print("                 ");
+                        for (int j = 0; j < yellowSymbolNum / 100; j++) {
+                            System.out.print(YELLOW);
+                        }
+                        System.out.println();
+                        System.out.println();
+                        System.out.println();
+                    }
+            
+                    // average percentage calculated from the non-rounded percentages 
+                    double purpleAvPercentage = purpleTotalPercentage / NUM_SIMS;
+                    double yellowAvPercentage = yellowTotalPercentage / NUM_SIMS;
+            
+                    //rounding 
+                    purpleAvPercentage = (double) Math.round(purpleAvPercentage * 100) / 100;
+                    yellowAvPercentage = (double) Math.round(yellowAvPercentage * 100) / 100;
+            
+                    // booleans to see which party won based on average percentage
+                    boolean doesPurpleWin = purpleAvPercentage >= yellowAvPercentage;
+                    boolean doesYellowWin = purpleAvPercentage <= yellowAvPercentage;
+            
+                    // printing 
+                    System.out.println("Election Simulator Results:");
+                    System.out.println(PURPLE + " Win = " + 
+                    doesPurpleWin + " (" + purpleAvPercentage + "%)");
+                    System.out.println(YELLOW + " Win = " + 
+                    doesYellowWin + " (" + yellowAvPercentage + "%)");
+                }
+            }
+                
+        </code>
+    </pre>
+  </body>
+</html>

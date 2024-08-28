@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="top-bar">Coding Projects</div>
+      <div class="nav-items">
+        <a href="index.html">Home</a> <a href="cad.html">CAD Projects
+        </a> <a href="coding.html">Coding Projects</a> <a href="robotics.html">Robotics Projects</a> <a href="about.html">About</a>
+      </div>
+    </nav>
+    <main>
+      <div class="heading">
+        <h3>
+            Dance Dance Arrayvolution
+          </h3>
+      </div>
+  </main>
+    <pre>
+        <code>
+            // Lara Vaidya
+            // CSE 121
+            // C3
+            // DDA
+            // TA: Shayna Suzuki
+            // This class runs the creative dance dance revolution game using an additional array
+            // The creative part is printig the statistics for the game by creating more arrays to store
+            // tallies
+            
+            import java.util.*;
+            
+            public class DDA {
+            
+                public static final String[] ACTIONS = {"⬆️", "➡️", "⬇️", "⬅️", "⏫"};
+                public static final String[] RESPONSES = {"UP", "RIGHT", "DOWN", "LEFT", "JUMP"};
+                public static final String STAR = "⭐";
+            
+                public static void main (String[] args) {
+                    Scanner console = new Scanner (System.in);
+                    Random rand = new Random ();
+                    System.out.println("Welcome to Dance Dance Arrayvolution!");
+                    System.out.println();
+                    showActions();
+                    String[] moves = makeMoves(console, rand);
+                    playGame(console, moves);
+            
+                }
+            
+                // shows the possible actions and correct responses 
+                public static void showActions () {
+                    System.out.println("These are the possible actions and their correct responses:");
+                    for (int i = 0; i < ACTIONS.length; i++) {
+                        System.out.println(ACTIONS[i] + ": " + RESPONSES[i]);
+                    }
+                    System.out.println();
+                }
+            
+                // asks user how many moves they want to play
+                // passes in Scanner and random to be used
+                // returns array of strings that are random moves 
+                public static String[]  makeMoves (Scanner console, Random rand) {
+                    System.out.print("How many moves would you like to play? ");
+                    int numOfMoves = console.nextInt();
+                    System.out.println();
+                    String[] moves = new String[numOfMoves];
+                    for (int i = 0; i < moves.length; i++) {
+                        int randomIndex = rand.nextInt(ACTIONS.length);
+                        moves[i] = ACTIONS[randomIndex];
+                    }
+                    return moves;
+                }
+            
+                // passses in Scanner and string array of moves
+                // prompts user for response to moves and checks to correct response
+                // tallies the count for each move
+                // calls method to print end screen 
+                public static void playGame (Scanner console, String[] moves) {
+                    double score = 0.0;
+                    int[] tallyOfEachMove = {0, 0, 0, 0, 0};
+                    int[] correctTallyOfEachMove = {0, 0, 0, 0, 0};
+            
+                    System.out.println("Let's Dance!");
+                    for (int i = 0; i < moves.length; i++) {
+                        System.out.print("(" + (i + 1) + ") " + moves[i] + ": ");
+                        String correctResponse = "";
+                        String response = console.next();
+                        for (int j = 0; j < ACTIONS.length; j++) {
+                            if (ACTIONS[j] == moves[i]) {
+                                correctResponse = RESPONSES[j].toUpperCase();;
+                                tallyOfEachMove[j] += 1;
+                                response = response.toUpperCase();
+                                if (response.equals(correctResponse)) {
+                                    score += 1;
+                                    correctTallyOfEachMove[j] += 1;
+                                } else if (response.contains(correctResponse)) {
+                                    score += 0.5;
+                                    correctTallyOfEachMove[j] += 1;
+                                }
+                                j = ACTIONS.length;
+                            }
+                        }
+                    }
+                    int maxScore = moves.length;
+                    endScreen(score, maxScore, tallyOfEachMove, correctTallyOfEachMove);
+                }
+            
+                // prints the end screen with number of stars earned from playing the game and score
+                // takes in score and max possible score
+                // prints also the statitics for each move
+                public static void endScreen (double score, int maxScore, int tallyOfEachMove[], 
+                    int correctTallyOfEachMove[]) {
+                    int numStars = 0;
+                    double percentage = (score / maxScore) * 100;
+                    if (percentage < 20) {
+                        numStars = 1;
+                    } else {
+                        numStars = (int) percentage / 20;
+                    }
+                    System.out.println();
+                    System.out.println("Woah that was groovy!");
+                    System.out.print("You Scored: ");
+                    for (int i = 0; i < numStars; i++) {
+                        System.out.print(STAR);
+                    }
+                    System.out.println(" (" + score + "/" + (maxScore * 1.0) + ")");
+                    System.out.println("    Results: ");
+                    for (int i = 0; i < ACTIONS.length; i++) {
+                        int percent = (int) ((correctTallyOfEachMove[i] * 1.0 )/ tallyOfEachMove[i] * 100);
+                        String percentString = "" + percent + "%";
+                        if (tallyOfEachMove[i] == 0) {
+                            percentString = "N/A";
+                        }
+                        System.out.print("      " + ACTIONS[i] + ": " + percentString + " (" + 
+                            correctTallyOfEachMove[i] + "/" + tallyOfEachMove[i] + ")");
+                        System.out.println();
+            
+                    }
+                    System.out.println();
+                    System.out.println("Thanks for playing!");
+                }
+            }
+        </code>
+    </pre>
+  </body>
+</html>
